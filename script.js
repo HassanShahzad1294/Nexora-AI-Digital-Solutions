@@ -1,89 +1,31 @@
 /* =========================
-   SCROLL REVEAL ANIMATION
+   CONTACT FORM
 ========================= */
 
-const sections = document.querySelectorAll(
-    ".solutions, .projects, .about, .stats, .testimonials, .contact"
-);
-
-
-const observer = new IntersectionObserver(
-    (entries) => {
-
-        entries.forEach((entry) => {
-
-            if (entry.isIntersecting) {
-
-                entry.target.classList.add("show");
-
-            }
-
-        });
-
-    },
-    {
-        threshold: 0.15
-    }
-);
-
-
-sections.forEach((section) => {
-
-    section.classList.add("hidden");
-
-    observer.observe(section);
-
-});
-
-
-
-/* =========================
-   NAVBAR SCROLL EFFECT
-========================= */
-
-const navbar = document.querySelector(".navbar");
-
-
-window.addEventListener("scroll", () => {
-
-    if (window.scrollY > 50) {
-
-        navbar.classList.add("navbar-scrolled");
-
-    } else {
-
-        navbar.classList.remove("navbar-scrolled");
-
-    }
-
-});
-
-
-
-const contactForm = document.querySelector(".contact-form");
+const contactForm = document.getElementById("contactForm");
+const submitBtn = document.getElementById("submitBtn");
+const formMessage = document.getElementById("formMessage");
 
 if (contactForm) {
 
-    contactForm.addEventListener("submit", async (event) => {
+    contactForm.addEventListener("submit", async function (event) {
 
         event.preventDefault();
 
-        const formData = {
-            name: contactForm.querySelector(
-                'input[placeholder="Enter your name"]'
-            ).value,
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const subject = document.getElementById("subject").value.trim();
+        const message = document.getElementById("message").value.trim();
 
-            email: contactForm.querySelector(
-                'input[placeholder="Enter your email"]'
-            ).value,
+        // Check fields
+        if (!name || !email || !subject || !message) {
+            formMessage.textContent = "Please fill all fields.";
+            return;
+        }
 
-            subject: contactForm.querySelector(
-                'input[placeholder="Project subject"]'
-            ).value,
-
-            message: contactForm.querySelector("textarea").value
-        };
-
+        // Button loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
 
         try {
 
@@ -96,36 +38,42 @@ if (contactForm) {
                         "Content-Type": "application/json"
                     },
 
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        subject: subject,
+                        message: message
+                    })
                 }
             );
 
-
             const data = await response.json();
 
+            if (response.ok && data.success) {
 
-            if (data.success) {
-
-                alert("Message sent successfully! ✅");
+                formMessage.textContent =
+                    "Message sent successfully! ";
 
                 contactForm.reset();
 
             } else {
 
-                alert("Something went wrong ❌");
+                formMessage.textContent =
+                    data.message || "Message could not be sent.";
 
             }
 
-
         } catch (error) {
 
-            console.log("Error:", error);
+            console.error("Error:", error);
 
-            alert(
-                "Server se connection nahi ho raha ❌"
-            );
-
+            formMessage.textContent =
+                "Backend server is not connected ";
         }
+
+        // Button normal
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send Message →";
 
     });
 
