@@ -30,7 +30,7 @@ if (contactForm) {
         try {
 
             const response = await fetch(
-                "http://localhost:5000/api/contact",
+                "https://nexora-backend-smoky.vercel.app/api/contact",
                 {
                     method: "POST",
 
