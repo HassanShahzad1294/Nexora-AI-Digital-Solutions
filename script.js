@@ -47,7 +47,10 @@ if (contactForm) {
                 }
             );
 
-            const data = await response.json();
+            const contentType = response.headers.get("content-type") || "";
+            const data = contentType.includes("application/json")
+                ? await response.json()
+                : {};
 
             if (response.ok && data.success) {
 
@@ -68,7 +71,7 @@ if (contactForm) {
             console.error("Error:", error);
 
             formMessage.textContent =
-                "Backend server is not connected ";
+                "Could not reach the contact service. Please try again later.";
         }
 
         // Button normal

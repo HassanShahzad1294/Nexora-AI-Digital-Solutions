@@ -37,6 +37,14 @@ app.get("/", (req, res) => {
 // SERVER
 // =========================
 
-app.listen(5000, () => {
-    console.log("Server running on http://localhost:5000");
-});
+// Vercel imports this Express app as a serverless function. Keep the local
+// listener only for `npm start` / `npm run dev`.
+if (require.main === module) {
+    const port = process.env.PORT || 5000;
+
+    app.listen(port, () => {
+        console.log(`Server running on http://localhost:${port}`);
+    });
+}
+
+module.exports = app;
